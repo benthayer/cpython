@@ -15,7 +15,7 @@ except ImportError:
 import abc
 import warnings
 
-from typeing import BinaryIO, Iterable, Text
+from typing import BinaryIO, Iterable, Text
 
 
 def _register(abstract_cls, *classes):
