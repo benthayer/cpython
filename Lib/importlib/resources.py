@@ -5,6 +5,7 @@ from . import abc as resources_abc
 from contextlib import contextmanager, suppress
 from importlib import import_module
 from importlib.abc import ResourceLoader
+from importlib.abc import ResourceReader
 from io import BytesIO, TextIOWrapper
 from pathlib import Path
 from types import ModuleType
@@ -17,6 +18,7 @@ from zipimport import ZipImportError
 __all__ = [
     'Package',
     'Resource',
+    'ResourceReader',
     'contents',
     'is_resource',
     'open_binary',

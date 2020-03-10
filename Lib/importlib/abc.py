@@ -343,46 +343,49 @@ _register(SourceLoader, machinery.SourceFileLoader)
 
 
 class ResourceReader(metaclass=abc.ABCMeta):
+    """Abstract base class for loaders to provide resource reading support."""
 
-    """Abstract base class to provide resource-reading support.
-
-    Loaders that support resource reading are expected to implement
-    the ``get_resource_reader(fullname)`` method and have it either return None
-    or an object compatible with this ABC.
-    """
-
-    @abc.abstractmethod
+    @abstractmethod
     def open_resource(self, resource):
+        # type: (Text) -> BinaryIO
         """Return an opened, file-like object for binary reading.
 
-        The 'resource' argument is expected to represent only a file name
-        and thus not contain any subdirectory components.
-
+        The 'resource' argument is expected to represent only a file name.
         If the resource cannot be found, FileNotFoundError is raised.
         """
+        # This deliberately raises FileNotFoundError instead of
+        # NotImplementedError so that if this method is accidentally called,
+        # it'll still do the right thing.
         raise FileNotFoundError
 
-    @abc.abstractmethod
+    @abstractmethod
     def resource_path(self, resource):
+        # type: (Text) -> Text
         """Return the file system path to the specified resource.
 
-        The 'resource' argument is expected to represent only a file name
-        and thus not contain any subdirectory components.
-
+        The 'resource' argument is expected to represent only a file name.
         If the resource does not exist on the file system, raise
         FileNotFoundError.
         """
+        # This deliberately raises FileNotFoundError instead of
+        # NotImplementedError so that if this method is accidentally called,
+        # it'll still do the right thing.
         raise FileNotFoundError
 
-    @abc.abstractmethod
-    def is_resource(self, name):
-        """Return True if the named 'name' is consider a resource."""
+    @abstractmethod
+    def is_resource(self, path):
+        # type: (Text) -> bool
+        """Return True if the named 'path' is a resource.
+
+        Files are resources, directories are not.
+        """
         raise FileNotFoundError
 
-    @abc.abstractmethod
+    @abstractmethod
     def contents(self):
-        """Return an iterable of strings over the contents of the package."""
-        return []
+        # type: () -> Iterable[str]
+        """Return an iterable of entries in `package`."""
+        raise FileNotFoundError
 
 
 _register(ResourceReader, machinery.SourceFileLoader)
