@@ -7,7 +7,6 @@ import contextlib
 
 from abc import ABC
 from pathlib import Path
-from ._compat import package_spec
 from zipfile import Path as ZipPath
 from functools import singledispatch
 
@@ -59,6 +58,19 @@ class Traversable(ABC):
         """
         Return Traversable child in self
         """
+
+
+class PackageSpec(object):
+    def __init__(self, **kwargs):
+        vars(self).update(kwargs)
+
+
+def package_spec(package):
+    return getattr(package, '__spec__', None) or \
+        PackageSpec(
+            origin=package.__file__,
+            loader=getattr(package, '__loader__', None),
+        )
 
 
 def from_package(package):

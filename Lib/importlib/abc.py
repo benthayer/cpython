@@ -15,6 +15,8 @@ except ImportError:
 import abc
 import warnings
 
+from typeing import BinaryIO, Iterable, Text
+
 
 def _register(abstract_cls, *classes):
     for cls in classes:
@@ -345,7 +347,7 @@ _register(SourceLoader, machinery.SourceFileLoader)
 class ResourceReader(metaclass=abc.ABCMeta):
     """Abstract base class for loaders to provide resource reading support."""
 
-    @abstractmethod
+    @abc.abstractmethod
     def open_resource(self, resource):
         # type: (Text) -> BinaryIO
         """Return an opened, file-like object for binary reading.
@@ -358,7 +360,7 @@ class ResourceReader(metaclass=abc.ABCMeta):
         # it'll still do the right thing.
         raise FileNotFoundError
 
-    @abstractmethod
+    @abc.abstractmethod
     def resource_path(self, resource):
         # type: (Text) -> Text
         """Return the file system path to the specified resource.
@@ -372,7 +374,7 @@ class ResourceReader(metaclass=abc.ABCMeta):
         # it'll still do the right thing.
         raise FileNotFoundError
 
-    @abstractmethod
+    @abc.abstractmethod
     def is_resource(self, path):
         # type: (Text) -> bool
         """Return True if the named 'path' is a resource.
@@ -381,7 +383,7 @@ class ResourceReader(metaclass=abc.ABCMeta):
         """
         raise FileNotFoundError
 
-    @abstractmethod
+    @abc.abstractmethod
     def contents(self):
         # type: () -> Iterable[str]
         """Return an iterable of entries in `package`."""

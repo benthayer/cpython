@@ -1,5 +1,4 @@
 import os
-import tempfile
 
 from . import abc as resources_abc
 from . import trees
@@ -11,9 +10,9 @@ from io import BytesIO, TextIOWrapper
 from pathlib import Path
 from types import ModuleType
 from typing import Iterable, Iterator, Optional, Set, Union   # noqa: F401
+from typing import ContextManager
 from typing import cast
 from typing.io import BinaryIO, TextIO
-from zipimport import ZipImportError
 
 
 __all__ = [
