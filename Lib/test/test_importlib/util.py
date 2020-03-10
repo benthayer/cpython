@@ -449,9 +449,7 @@ def create_package(file, path, is_package=True, contents=()):
         def contents(self):
             if isinstance(path, Exception):
                 raise path
-            # There's no yield from in baseball, er, Python 2.
-            for entry in contents:
-                yield entry
+            yield from contents:
 
     name = 'testingpackage'
     # Unfortunately importlib.util.module_from_spec() was not introduced until

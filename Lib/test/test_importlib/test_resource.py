@@ -28,8 +28,6 @@ class ResourceTests:
         # test suite importing these modules and writing these caches.  They
         # aren't germane to this test, so just filter them out.
         contents.discard('__pycache__')
-        contents.discard('__init__.pyc')
-        contents.discard('__init__.pyo')
         self.assertEqual(contents, {
             '__init__.py',
             'subdirectory',
@@ -87,30 +85,12 @@ class ResourceCornerCaseTests(unittest.TestCase):
         module.__loader__ = object()
         # Give the module a dummy origin.
         module.__file__ = '/path/which/shall/not/be/named'
-        if sys.version_info >= (3,):
-            module.__spec__.loader = module.__loader__
-            module.__spec__.origin = module.__file__
+        module.__spec__.origin = module.__file__
+        module.__spec__.loader = module.__loader__
         self.assertFalse(resources.is_resource(module, 'A'))
 
 
-class ResourceFromZipsTest(util.ZipSetupBase, unittest.TestCase):
-    ZIP_MODULE = zipdata02                          # type: ignore
-
-    def test_unrelated_contents(self):
-        # https://gitlab.com/python-devs/importlib_resources/issues/44
-        #
-        # Here we have a zip file with two unrelated subpackages.  The bug
-        # reports that getting the contents of a resource returns unrelated
-        # files.
-        self.assertEqual(
-            set(resources.contents('ziptestdata.one')),
-            {'__init__.py', 'resource1.txt'})
-        self.assertEqual(
-            set(resources.contents('ziptestdata.two')),
-            {'__init__.py', 'resource2.txt'})
-
-
-class SubdirectoryResourceFromZipsTest(util.ZipSetupBase, unittest.TestCase):
+class ResourceFromZipsTest01(util.ZipSetupBase, unittest.TestCase):
     ZIP_MODULE = zipdata01                          # type: ignore
 
     def test_is_submodule_resource(self):
@@ -134,9 +114,27 @@ class SubdirectoryResourceFromZipsTest(util.ZipSetupBase, unittest.TestCase):
             {'__init__.py', 'binary.file'})
 
 
+class ResourceFromZipsTest02(util.ZipSetupBase, unittest.TestCase):
+    ZIP_MODULE = zipdata02                          # type: ignore
+
+    def test_unrelated_contents(self):
+        # https://gitlab.com/python-devs/importlib_resources/issues/44
+        #
+        # Here we have a zip file with two unrelated subpackages.  The bug
+        # reports that getting the contents of a resource returns unrelated
+        # files.
+        self.assertEqual(
+            set(resources.contents('ziptestdata.one')),
+            {'__init__.py', 'resource1.txt'})
+        self.assertEqual(
+            set(resources.contents('ziptestdata.two')),
+            {'__init__.py', 'resource2.txt'})
+
+
 class NamespaceTest(unittest.TestCase):
     def test_namespaces_cannot_have_resources(self):
-        contents = resources.contents('test.test_importlib.data03.namespace')
+        contents = resources.contents(
+            'test.test_importlib.data03.namespace')
         self.assertFalse(list(contents))
         # Even though there is a file in the namespace directory, it is not
         # considered a resource, since namespace packages can't have them.
